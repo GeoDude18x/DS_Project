@@ -65,6 +65,7 @@ int InsertWithSeparateChaining(HashTable* hashTable, char* destination, int weig
     unsigned long hash = GenerateHash(destination);
     Parcel* result = InsertParcelIntoBST(hashTable->root[hash], destination, weight, valuation);
     if (result == NULL) {
+        printf("Insertion failed for destination: %s\n", destination);
         return;
     }
     hashTable->root[hash] = result;
