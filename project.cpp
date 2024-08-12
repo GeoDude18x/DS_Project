@@ -118,7 +118,7 @@ Parcel* initializeParcelNode(char* destination, int weight, float valuation) {
 // 
 //
 //Function: InsertParcelIntoBST()
-//Description: This function inserts a new element into the BST.
+//Description: This function inserts a new parcel into the BST.
 //             It does so by traversing the tree according to the
 //             weight value of the parcel.
 //Parameters:
@@ -128,7 +128,7 @@ Parcel* initializeParcelNode(char* destination, int weight, float valuation) {
 //  int weight: The weight of the parcel, used to fill the weight attribute
 //  float valuation: The valuation of the parcel, used to fill the valuation attribute
 //Returns:
-//  Parcel*: Pointer to the new Parcel object. NULL, in case of failure.
+//  Parcel*: Pointer to the new Parcel object.
 //
 Parcel* insertParcelIntoBST(Parcel* root, char* destination, int weight, float valuation) {
     if (root == NULL) { // parent is empty so node is inserted here
