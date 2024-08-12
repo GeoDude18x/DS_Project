@@ -15,3 +15,17 @@
 // Define the maximum and minimum valuations
 #define MAX_VALUATION 2000
 #define MIN_VALUATION 10
+
+// Define the structure for a Parcel
+typedef struct Parcel {
+    char destination[MAX_COUNTRY_LENGTH + 1];
+    int weight;
+    float valuation;
+    struct Parcel* left;
+    struct Parcel* right;
+} Parcel;
+
+// Define the structure for the hash table
+typedef struct HashTable {
+    Parcel* root; // Root node of the binary search tree
+} HashTable;
