@@ -35,6 +35,7 @@ int InsertWithSeparateChaining(HashTable* hashTable, char* destination, int weig
 Parcel* InitializeParcelNode(char* destination, int weight, float valuation);
 Parcel* InsertParcelIntoBST(Parcel* root, char* destination, int weight, float valuation);
 int SearchParcelInBST(Parcel* root, int weightToSearch);
+Parcel* SearchWithSeparateChaining(HashTable* hashTable, char* destination, int weight);
 
 // Function to generate hash value using djb2 algorithm
 unsigned long GenerateHash(char* destination) {
@@ -70,6 +71,25 @@ int InsertWithSeparateChaining(HashTable* hashTable, char* destination, int weig
         return;
     }
     hashTable->root[hash] = result;
+}
+
+// Function to search for a parcel in the hash table
+Parcel* SearchWithSeparateChaining(HashTable* hashTable, char* destination, int weight) {
+    unsigned long hash = GenerateHash(destination);
+    Parcel* root = hashTable->root[hash];
+
+    if (root == NULL) {
+        printf("ERROR: Cannot find parcel for destination: %s\n", destination);
+        return NULL;
+    }
+
+    Parcel* foundParcel = SearchParcelInBST(root, weight);
+    if (foundParcel == NULL) {
+        printf("ERROR: Cannot find parcel with weight %d for destination: %s\n", weight, destination);
+        return NULL;
+    }
+
+    return foundParcel;  // Return the found parcel
 }
 
 //Function Definitions
