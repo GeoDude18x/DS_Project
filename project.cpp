@@ -1,3 +1,13 @@
+/*
+ * FILE : project.cpp
+ * PROJECT : SENG1050 - DATA STRUCTURES GROUP PROJECT
+ * PROGRAMMERS : George Dall & Behzad Afrasiabi
+ * FIRST VERSION : 2024-08-11
+ * DESCRIPTION :
+ * This program implements a hash table and a binary search tree to manage various products
+ * and display output based on specific requirements.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
