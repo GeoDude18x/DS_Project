@@ -42,6 +42,12 @@ void displayParcelsForWeight(HashTable* hashTable, int weight);
 void displayMenu(HashTable* hashTable);
 void displayStatsTotal(HashTable* hashTable, char* destination);
 void calculateStatsTotal(Parcel* root, Parcel* result);
+void displayCheapestAndMostExpensiveParcels(HashTable* hashTable, char* destination);
+void findCheapestParcel(Parcel* root, Parcel* result);
+void findMostExpensiveParcel(Parcel* root, Parcel* result);
+void displayLightestAndHeaviestParcel(HashTable* hashTable, char* destination);
+void findLightestParcel(Parcel* root, Parcel* result);
+void findHeaviestParcel(Parcel* root, Parcel* result);
 
 // Function to generate hash value using djb2 algorithm
 unsigned long generateHash(char* destination) {
@@ -222,6 +228,119 @@ void calculateStatsTotal(Parcel* root, Parcel* result)
 
     calculateStatsTotal(root->left, result);
     calculateStatsTotal(root->right, result);
+}
+
+// Function to show the cheapest and most expensive parcel details
+void displayCheapestAndMostExpensiveParcels(HashTable* hashTable, char* destination) {
+    unsigned long hash = generateHash(destination);
+    Parcel* root = hashTable->root[hash];
+
+    if (root == NULL) {
+        printf("No parcels found for destination: %s\n", destination);
+        return;
+    }
+
+
+    Parcel* cheapest = initializeParcelNode(destination, 0, root->valuation);
+    Parcel* mostExpensive = initializeParcelNode(destination, 0, root->valuation);
+
+    findCheapestParcel(root, cheapest);
+    findMostExpensiveParcel(root, mostExpensive);
+
+    printf("The cheapest parcel for destination %s: weight - %d  valuation - %.2f\n", destination,
+        cheapest->weight, cheapest->valuation);
+    printf("The most expensive valuation for destination %s: weight - %d  valuation - %.2f\n", destination, mostExpensive->weight,
+        mostExpensive->valuation);
+    free(cheapest);
+    free(mostExpensive);
+}
+
+// Function to find the cheapest parcel (by taking the root valuation and comparing)
+void findCheapestParcel(Parcel* root, Parcel* result) {
+    if (root == NULL)
+        return;
+
+    if (root->valuation < result->valuation)
+    {
+        result->valuation = root->valuation;
+        result->weight = root->weight;
+    }
+
+    findCheapestParcel(root->left, result);
+    findCheapestParcel(root->right, result);
+
+}
+
+// Function to find the most expensive parcel (by taking the root valuation and comparing)
+void findMostExpensiveParcel(Parcel* root, Parcel* result) {
+    if (root == NULL)
+        return;
+
+    if (root->valuation > result->valuation)
+    {
+        result->valuation = root->valuation;
+        result->weight = root->weight;
+    }
+
+    findMostExpensiveParcel(root->left, result);
+    findMostExpensiveParcel(root->right, result);
+}
+
+// Find lightest and heaviest parcels for country
+void displayLightestAndHeaviestParcel(HashTable* hashTable, char* destination)
+{
+    unsigned long hash = generateHash(destination);
+    Parcel* root = hashTable->root[hash];
+
+    if (root == NULL) {
+        printf("No parcels found for destination: %s\n", destination);
+        return;
+    }
+
+    Parcel* lightest = initializeParcelNode(destination, root->weight, 0);
+    Parcel* heaviest = initializeParcelNode(destination, root->weight, 0);
+    printf("The lightest parcel for destination %s: weight - %d  valuation - %.2f\n", destination, lightest->weight,
+        lightest->valuation);
+    printf("The heaviest valuation for destination %s: weight - %d  valuation - %.2f\n", destination, heaviest->weight,
+        heaviest->valuation);
+
+    free(lightest);
+    free(heaviest);
+}
+
+
+// Finds lightest parcel by traversing left
+void findLightestParcel(Parcel* root, Parcel* result)
+{
+    if (root == NULL)
+        return NULL;
+
+    if (root->left != NULL)
+    {
+        return findLightestParcel(root->left, result);
+    }
+    else
+    {
+        result->weight = root->weight;
+        result->valuation = root->valuation;
+    }
+}
+
+// Finds heaviest parcel by traversing right
+void findHeaviestParcel(Parcel* root, Parcel* result)
+{
+    if (root == NULL)
+        return NULL;
+
+    if (root->right != NULL)
+    {
+        return findHeaviestParcel(root->right, result);
+    }
+    else
+    {
+        result->weight = root->weight;
+        result->valuation = root->valuation;
+    }
 }
 
 // Function to load data into the hash table
