@@ -313,7 +313,7 @@ void displayLightestAndHeaviestParcel(HashTable* hashTable, char* destination)
 void findLightestParcel(Parcel* root, Parcel* result)
 {
     if (root == NULL)
-        return NULL;
+        return;
 
     if (root->left != NULL)
     {
@@ -330,7 +330,7 @@ void findLightestParcel(Parcel* root, Parcel* result)
 void findHeaviestParcel(Parcel* root, Parcel* result)
 {
     if (root == NULL)
-        return NULL;
+        return;
 
     if (root->right != NULL)
     {
