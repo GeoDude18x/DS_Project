@@ -38,6 +38,7 @@ int SearchParcelInBST(Parcel* root, int weightToSearch);
 Parcel* SearchWithSeparateChaining(HashTable* hashTable, char* destination, int weight);
 void printDestinationParcels(Parcel* root);
 void DisplayParcelsForDestination(HashTable* hashTable, char* destination);
+void printOtherWeightedParcels(Parcel* root);
 
 // Function to generate hash value using djb2 algorithm
 unsigned long GenerateHash(char* destination) {
@@ -196,6 +197,18 @@ void printDestinationParcels(Parcel* root) {
     printDestinationParcels(root->left);
     printDestinationParcels(root->right);
 
+}
+
+// Function to recursively print parcels for a weight
+void printOtherWeightedParcels(Parcel* root, int weight) {
+    if (root == NULL)
+        return;
+
+    if (root->weight != weight)
+        printf("%s, %d, %.2f \n", root->destination, root->weight, root->valuation);
+
+    printOtherWeightedParcels(root->left);
+    printOtherWeightedParcels(root->right);
 }
 
 int main(void) {
