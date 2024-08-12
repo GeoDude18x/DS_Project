@@ -400,9 +400,9 @@ void displayMenu(HashTable* hashTable) {
         printf("5. Exit.\n");
         printf("Enter your choice: ");
         
-        if (scanf("%d", &choice) != 1) {  // Validate the input
+        if (scanf("%d", &choice) != 1) {
             printf("Invalid input. Please enter a valid choice.\n");
-            while (getchar() != '\n');  // Clear the input buffer
+            while (getchar() != '\n');
             continue;
         }
 
