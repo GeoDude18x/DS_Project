@@ -37,6 +37,7 @@ Parcel* InsertParcelIntoBST(Parcel* root, char* destination, int weight, float v
 int SearchParcelInBST(Parcel* root, int weightToSearch);
 Parcel* SearchWithSeparateChaining(HashTable* hashTable, char* destination, int weight);
 void printDestinationParcels(Parcel* root);
+void DisplayParcelsForDestination(HashTable* hashTable, char* destination);
 
 // Function to generate hash value using djb2 algorithm
 unsigned long GenerateHash(char* destination) {
@@ -89,8 +90,8 @@ Parcel* SearchWithSeparateChaining(HashTable* hashTable, char* destination, int 
         printf("ERROR: Cannot find parcel with weight %d for destination: %s\n", weight, destination);
         return NULL;
     }
-
-    return foundParcel;  // Return the found parcel
+    printf("Parcel with weight %d found for destination: %s\n", weight, destination);
+    return SUCCESS;
 }
 
 //Function Definitions
@@ -153,6 +154,7 @@ Parcel* InsertParcelIntoBST(Parcel* root, char* destination, int weight, float v
     return root;
 }
 
+// Function to search for a parcel in the BST
 int SearchParcelInBST(Parcel* root, int weightToSearch) {
     if (root == NULL) {
         printf("There are no parcels with that destination name.\n");
@@ -173,6 +175,19 @@ int SearchParcelInBST(Parcel* root, int weightToSearch) {
     return FAILURE;
 }
 
+// Function to display parcels for a destination
+void DisplayParcelsForDestination(HashTable* hashTable, char* destination) {
+    unsigned long hash = GenerateHash(destination);
+    Parcel* root = hashTable->root[hash];
+
+    if (root == NULL) {
+        printf("No parcels found for destination: %s\n", destination);
+        return;
+    }
+    printDestinationParcels(root);
+}
+
+// Function to recursively print parcels for a destination
 void printDestinationParcels(Parcel* root) {
     if (root == NULL)
         return;
