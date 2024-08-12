@@ -40,6 +40,8 @@ void displayParcelsForDestination(HashTable* hashTable, char* destination);
 void printOtherWeightedParcels(Parcel* root, int weight);
 void displayParcelsForWeight(HashTable* hashTable, int weight);
 void displayMenu(HashTable* hashTable);
+void displayStatsTotal(HashTable* hashTable, char* destination);
+void calculateStatsTotal(Parcel* root, Parcel* result);
 
 // Function to generate hash value using djb2 algorithm
 unsigned long generateHash(char* destination) {
@@ -75,31 +77,6 @@ int insertWithSeparateChaining(HashTable* hashTable, char* destination, int weig
         return;
     }
     hashTable->root[hash] = result;
-}
-
-// Function to load data into the hash table
-int loadDataFromFile(HashTable* hashTable, char* filename) {
-    FILE* file = fopen(filename, "r");
-    if (file == NULL) {
-        printf("Error opening file %s\n", filename);
-        return FILE_OPEN_ERROR;
-    }
-    char destination[MAX_COUNTRY_LENGTH + 1];
-    int weight;
-    float valuation;
-
-    while (fscanf(file, "%20s %d %f", destination, &weight, &valuation) == 3) {
-        if (insertWithSeparateChaining(hashTable, destination, weight, valuation) == FAILURE) {
-            printf("Failed to insert parcel: %s\n", destination);
-        }
-    }
-
-    if (fclose(file) != 0) {
-        printf("Error closing file %s\n", filename);
-        return FILE_CLOSE_ERROR;
-    }
-
-    return SUCCESS;
 }
 
 //Function Definitions
@@ -195,6 +172,81 @@ void printOtherWeightedParcels(Parcel* root, int weight) {
 
     printOtherWeightedParcels(root->left);
     printOtherWeightedParcels(root->right);
+}
+
+// Function to recursivly check hashtable for parcels for different weights than the one entered
+// and then print 
+void checkOtherWeightParcels(HashTable* hashTable, char* destination, int weight) {
+    unsigned long hash = generateHash(destination);
+    Parcel* root = hashTable->root[hash];
+
+    if (root == NULL) {
+        printf("No parcels found for destination: %s\n", destination);
+        return;
+    }
+
+    printOtherWeightedParcels(root, weight);
+}
+
+// Function to display the total parcel load and valuation for the country: 
+// When user enters country name, display the cumulative parcel 
+// load and total valuation of all the parcels.
+void displayStatsTotal(HashTable* hashTable, char* destination)
+{
+    unsigned long hash = generateHash(destination);
+    Parcel* root = hashTable->root[hash];
+
+    if (root == NULL) {
+        printf("No parcels found for destination: %s\n", destination);
+        return;
+    }
+
+    Parcel* result = initializeParcelNode(destination, 0, 0);
+    calculateStatsTotal(root, result);
+
+    printf("The culminative weight for parcels under destination $s is: %d \n",
+        destination, result->weight);
+    printf("The culminative valuation for parcels under destination $s is: %.2f \n", destination,
+        result->valuation);
+        free(result);
+}
+
+// Function to add culminative weight and value for parcel and return as Parcel*
+void calculateStatsTotal(Parcel* root, Parcel* result)
+{
+    if (root == NULL)
+        return;
+
+    result->weight += root->weight;
+    result->valuation += result->valuation;
+
+    calculateStatsTotal(root->left, result);
+    calculateStatsTotal(root->right, result);
+}
+
+// Function to load data into the hash table
+int loadDataFromFile(HashTable* hashTable, char* filename) {
+    FILE* file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("Error opening file %s\n", filename);
+        return FILE_OPEN_ERROR;
+    }
+    char destination[MAX_COUNTRY_LENGTH + 1];
+    int weight;
+    float valuation;
+
+    while (fscanf(file, "%20s %d %f", destination, &weight, &valuation) == 3) {
+        if (insertWithSeparateChaining(hashTable, destination, weight, valuation) == FAILURE) {
+            printf("Failed to insert parcel: %s\n", destination);
+        }
+    }
+
+    if (fclose(file) != 0) {
+        printf("Error closing file %s\n", filename);
+        return FILE_CLOSE_ERROR;
+    }
+
+    return SUCCESS;
 }
 
 // Function to display the menu
