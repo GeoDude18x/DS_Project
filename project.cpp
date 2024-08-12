@@ -34,11 +34,14 @@ HashTable* InitializeHashTable(void);
 int InsertWithSeparateChaining(HashTable* hashTable, char* destination, int weight, float valuation);
 Parcel* InitializeParcelNode(char* destination, int weight, float valuation);
 Parcel* InsertParcelIntoBST(Parcel* root, char* destination, int weight, float valuation);
+int LoadDataFromFile(HashTable* hashTable, char* filename);
 int SearchParcelInBST(Parcel* root, int weightToSearch);
 Parcel* SearchWithSeparateChaining(HashTable* hashTable, char* destination, int weight);
 void printDestinationParcels(Parcel* root);
 void DisplayParcelsForDestination(HashTable* hashTable, char* destination);
-void printOtherWeightedParcels(Parcel* root);
+void printOtherWeightedParcels(Parcel* root, int weight);
+void DisplayParcelsForWeight(HashTable* hashTable, int weight);
+void DisplayMenu(HashTable* hashTable);
 
 // Function to generate hash value using djb2 algorithm
 unsigned long GenerateHash(char* destination) {
@@ -92,6 +95,31 @@ Parcel* SearchWithSeparateChaining(HashTable* hashTable, char* destination, int 
         return NULL;
     }
     printf("Parcel with weight %d found for destination: %s\n", weight, destination);
+    return SUCCESS;
+}
+
+// Function to load data into the hash table
+int LoadDataFromFile(HashTable* hashTable, char* filename) {
+    FILE* file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("Error opening file %s\n", filename);
+        return FILE_OPEN_ERROR;
+    }
+    char destination[MAX_COUNTRY_LENGTH + 1];
+    int weight;
+    float valuation;
+
+    while (fscanf(file, "%20s %d %f", destination, &weight, &valuation) == 3) {
+        if (InsertWithSeparateChaining(hashTable, destination, weight, valuation) == FAILURE) {
+            printf("Failed to insert parcel: %s\n", destination);
+        }
+    }
+
+    if (fclose(file) != 0) {
+        printf("Error closing file %s\n", filename);
+        return FILE_CLOSE_ERROR;
+    }
+
     return SUCCESS;
 }
 
@@ -211,6 +239,70 @@ void printOtherWeightedParcels(Parcel* root, int weight) {
     printOtherWeightedParcels(root->right);
 }
 
+// Function to display the menu
+void DisplayMenu(HashTable* hashTable) {
+    int choice;
+    char destination[MAX_COUNTRY_LENGTH + 1];
+    int weight;
+    char fileName[256];
+
+    do {
+        printf("Menu:\n");
+        printf("1. Enter country name and display all parcels.\n");
+        printf("2. Enter country and weight to search for a parcel.\n");
+        printf("3. Enter weight to display all parcels excluding that weight.\n");
+        printf("4. Load parcels from a file.\n");
+        printf("5. Exit.\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+        case 1:
+            printf("Enter country name: ");
+            scanf("%s", destination);
+            DisplayParcelsForDestination(hashTable, destination);
+            break;
+        case 2:
+            printf("Enter country name: ");
+            scanf("%s", destination);
+            printf("Enter weight to search: ");
+            scanf("%d", &weight);
+            Parcel* foundParcel = SearchWithSeparateChaining(hashTable, destination, weight);
+            if (foundParcel != NULL) {
+                printf("Parcel found.\n");
+            }
+            else {
+                printf("Parcel not found.\n");
+            }
+            break;
+        case 3:
+            printf("Enter weight to exclude: ");
+            scanf("%d", &weight);
+            DisplayParcelsForWeight(hashTable, weight);
+            break;
+        case 4:
+            printf("Enter the name of the file to load parcels: ");
+            scanf("%s", fileName);
+            if (LoadDataFromFile(hashTable, fileName) == SUCCESS) {
+                printf("Data loaded successfully from %s\n", fileName);
+            }
+            else {
+                printf("Failed to load data from %s\n", fileName);
+            }
+            break;
+        case 5:
+            printf("Exiting...\n");
+            break;
+        default:
+            printf("Invalid choice. Please try again.\n");
+        }
+    } while (choice != 5);
+}
+
 int main(void) {
+
+    HashTable* hashTable = InitializeHashTable();
+    DisplayMenu(hashTable);
+    
     return 0;
 }
