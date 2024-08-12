@@ -29,22 +29,20 @@ typedef struct HashTable {
 } HashTable;
 
 // Prototypes
-unsigned long GenerateHash(char* destination);
-HashTable* InitializeHashTable(void);
-int InsertWithSeparateChaining(HashTable* hashTable, char* destination, int weight, float valuation);
-Parcel* InitializeParcelNode(char* destination, int weight, float valuation);
-Parcel* InsertParcelIntoBST(Parcel* root, char* destination, int weight, float valuation);
-int LoadDataFromFile(HashTable* hashTable, char* filename);
-int SearchParcelInBST(Parcel* root, int weightToSearch);
-Parcel* SearchWithSeparateChaining(HashTable* hashTable, char* destination, int weight);
+unsigned long generateHash(char* destination);
+HashTable* initializeHashTable(void);
+int insertWithSeparateChaining(HashTable* hashTable, char* destination, int weight, float valuation);
+Parcel* initializeParcelNode(char* destination, int weight, float valuation);
+Parcel* insertParcelIntoBST(Parcel* root, char* destination, int weight, float valuation);
+int loadDataFromFile(HashTable* hashTable, char* filename);
 void printDestinationParcels(Parcel* root);
-void DisplayParcelsForDestination(HashTable* hashTable, char* destination);
+void displayParcelsForDestination(HashTable* hashTable, char* destination);
 void printOtherWeightedParcels(Parcel* root, int weight);
-void DisplayParcelsForWeight(HashTable* hashTable, int weight);
-void DisplayMenu(HashTable* hashTable);
+void displayParcelsForWeight(HashTable* hashTable, int weight);
+void displayMenu(HashTable* hashTable);
 
 // Function to generate hash value using djb2 algorithm
-unsigned long GenerateHash(char* destination) {
+unsigned long generateHash(char* destination) {
     unsigned long hash = 5381;
     int c;
 
@@ -55,7 +53,7 @@ unsigned long GenerateHash(char* destination) {
 }
 
 // Function to initialize the hash table
-HashTable* InitializeHashTable(void) {
+HashTable* initializeHashTable(void) {
     HashTable* hashTable = (HashTable*)malloc(sizeof(HashTable));
     if (hashTable == NULL) {
         printf("Memory allocation failed.\n");
@@ -69,9 +67,9 @@ HashTable* InitializeHashTable(void) {
 }
 
 // Function to insert a parcel into the hash table
-int InsertWithSeparateChaining(HashTable* hashTable, char* destination, int weight, float valuation) {
-    unsigned long hash = GenerateHash(destination);
-    Parcel* result = InsertParcelIntoBST(hashTable->root[hash], destination, weight, valuation);
+int insertWithSeparateChaining(HashTable* hashTable, char* destination, int weight, float valuation) {
+    unsigned long hash = generateHash(destination);
+    Parcel* result = insertParcelIntoBST(hashTable->root[hash], destination, weight, valuation);
     if (result == NULL) {
         printf("Insertion failed for destination: %s\n", destination);
         return;
@@ -79,27 +77,8 @@ int InsertWithSeparateChaining(HashTable* hashTable, char* destination, int weig
     hashTable->root[hash] = result;
 }
 
-// Function to search for a parcel in the hash table
-Parcel* SearchWithSeparateChaining(HashTable* hashTable, char* destination, int weight) {
-    unsigned long hash = GenerateHash(destination);
-    Parcel* root = hashTable->root[hash];
-
-    if (root == NULL) {
-        printf("ERROR: Cannot find parcel for destination: %s\n", destination);
-        return NULL;
-    }
-
-    Parcel* foundParcel = SearchParcelInBST(root, weight);
-    if (foundParcel == NULL) {
-        printf("ERROR: Cannot find parcel with weight %d for destination: %s\n", weight, destination);
-        return NULL;
-    }
-    printf("Parcel with weight %d found for destination: %s\n", weight, destination);
-    return SUCCESS;
-}
-
 // Function to load data into the hash table
-int LoadDataFromFile(HashTable* hashTable, char* filename) {
+int loadDataFromFile(HashTable* hashTable, char* filename) {
     FILE* file = fopen(filename, "r");
     if (file == NULL) {
         printf("Error opening file %s\n", filename);
@@ -110,7 +89,7 @@ int LoadDataFromFile(HashTable* hashTable, char* filename) {
     float valuation;
 
     while (fscanf(file, "%20s %d %f", destination, &weight, &valuation) == 3) {
-        if (InsertWithSeparateChaining(hashTable, destination, weight, valuation) == FAILURE) {
+        if (insertWithSeparateChaining(hashTable, destination, weight, valuation) == FAILURE) {
             printf("Failed to insert parcel: %s\n", destination);
         }
     }
@@ -137,10 +116,10 @@ int LoadDataFromFile(HashTable* hashTable, char* filename) {
 //  Parcel*: Pointer to the Parcel memory created and filled. NULL, in case of failure
 //           in memory allocation
 //
-Parcel* InitializeParcelNode(char* destination, int weight, float valuation) {
+Parcel* initializeParcelNode(char* destination, int weight, float valuation) {
     Parcel* node = (Parcel*)malloc(sizeof(Parcel));
     if (node == NULL) {
-        printf("Memory allocation failure for InitializeParcelNode()");
+        printf("Memory allocation failure for initializeParcelNode()");
         return NULL;
     }
 
@@ -168,45 +147,24 @@ Parcel* InitializeParcelNode(char* destination, int weight, float valuation) {
 //Returns:
 //  Parcel*: Pointer to the new Parcel object. NULL, in case of failure.
 //
-Parcel* InsertParcelIntoBST(Parcel* root, char* destination, int weight, float valuation) {
+Parcel* insertParcelIntoBST(Parcel* root, char* destination, int weight, float valuation) {
     if (root == NULL) { // parent is empty so node is inserted here
-        return InitializeParcelNode(destination, weight, valuation);
+        return initializeParcelNode(destination, weight, valuation);
     }
 
     if (weight < root->weight) { // weight is less than root's, attempting to insert again on the left node (with updated root)
-        root->left = InsertParcelIntoBST(root->left, destination, weight, valuation);
+        root->left = insertParcelIntoBST(root->left, destination, weight, valuation);
     }
     else if (elementToInsert > root->Element) { // weight is greater than root's, attempting to insert again on the right node (with updated root)
-        root->right = InsertParcelIntoBST(root->right, destination, weight, valuation);
+        root->right = insertParcelIntoBST(root->right, destination, weight, valuation);
     }
 
     return root;
 }
 
-// Function to search for a parcel in the BST
-int SearchParcelInBST(Parcel* root, int weightToSearch) {
-    if (root == NULL) {
-        printf("There are no parcels with that destination name.\n");
-        return FAILURE;
-    }
-
-    if (root->weight == weightToSearch) {
-        return root->weight;
-    }
-
-    if (elementToSearch < root->weight) {
-        return SearchElementInBST(root->LeftChild, weightToSearch);
-    }
-    else if (elementToSearch > root->weight) {
-        return SearchElementInBST(root->RightChild, weightToSearch);
-    }
-
-    return FAILURE;
-}
-
 // Function to display parcels for a destination
-void DisplayParcelsForDestination(HashTable* hashTable, char* destination) {
-    unsigned long hash = GenerateHash(destination);
+void displayParcelsForDestination(HashTable* hashTable, char* destination) {
+    unsigned long hash = generateHash(destination);
     Parcel* root = hashTable->root[hash];
 
     if (root == NULL) {
@@ -240,7 +198,7 @@ void printOtherWeightedParcels(Parcel* root, int weight) {
 }
 
 // Function to display the menu
-void DisplayMenu(HashTable* hashTable) {
+void displayMenu(HashTable* hashTable) {
     int choice;
     char destination[MAX_COUNTRY_LENGTH + 1];
     int weight;
@@ -260,30 +218,45 @@ void DisplayMenu(HashTable* hashTable) {
         case 1:
             printf("Enter country name: ");
             scanf("%s", destination);
-            DisplayParcelsForDestination(hashTable, destination);
+            displayParcelsForDestination(hashTable, destination);
             break;
         case 2:
             printf("Enter country name: ");
             scanf("%s", destination);
             printf("Enter weight to search: ");
             scanf("%d", &weight);
-            Parcel* foundParcel = SearchWithSeparateChaining(hashTable, destination, weight);
-            if (foundParcel != NULL) {
-                printf("Parcel found.\n");
-            }
-            else {
-                printf("Parcel not found.\n");
+            {
+                unsigned long hash = generateHash(destination);
+                Parcel* root = hashTable->root[hash];
+
+                if (root != NULL) {
+                    Parcel* foundParcel = insertParcelIntoBST(root, destination, weight, 0.0f);
+                    if (foundParcel != NULL) {
+                        printf("Parcel found with weight %d in %s.\n", weight, destination);
+                    }
+                    else {
+                        printf("Parcel not found with weight %d in %s.\n", weight, destination);
+                    }
+                }
+                else {
+                    printf("No parcels found for destination: %s\n", destination);
+                }
             }
             break;
         case 3:
             printf("Enter weight to exclude: ");
             scanf("%d", &weight);
-            DisplayParcelsForWeight(hashTable, weight);
+            for (int i = 0; i < HASH_TABLE_SIZE; i++) {
+                Parcel* root = hashTable->root[i];
+                if (root != NULL) {
+                    printOtherWeightedParcels(root, weight);
+                }
+            }
             break;
         case 4:
             printf("Enter the name of the file to load parcels: ");
             scanf("%s", fileName);
-            if (LoadDataFromFile(hashTable, fileName) == SUCCESS) {
+            if (loadDataFromFile(hashTable, fileName) == SUCCESS) {
                 printf("Data loaded successfully from %s\n", fileName);
             }
             else {
@@ -301,8 +274,8 @@ void DisplayMenu(HashTable* hashTable) {
 
 int main(void) {
 
-    HashTable* hashTable = InitializeHashTable();
-    DisplayMenu(hashTable);
+    HashTable* hashTable = initializeHashTable();
+    displayMenu(hashTable);
     
     return 0;
 }
