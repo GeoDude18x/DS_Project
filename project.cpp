@@ -31,11 +31,11 @@ typedef struct HashTable {
 } HashTable;
 
 // Function to generate hash value using djb2 algorithm
-unsigned long GenerateHash(char* country) {
+unsigned long GenerateHash(char* destination) {
     unsigned long hash = 5381;
     int c;
 
-    while ((c = *country++)) {
+    while ((c = *destination++)) {
         hash = ((hash << 5) + hash) + c;
     }
     return hash % HASH_TABLE_SIZE;
