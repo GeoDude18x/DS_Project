@@ -27,5 +27,16 @@ typedef struct Parcel {
 
 // Define the structure for the hash table
 typedef struct HashTable {
-    Parcel* root; // Root node of the binary search tree
+    Parcel* root[HASH_TABLE_SIZE];
 } HashTable;
+
+// Function to generate hash value using djb2 algorithm
+unsigned long GenerateHash(char* country) {
+    unsigned long hash = 5381;
+    int c;
+
+    while ((c = *country++)) {
+        hash = ((hash << 5) + hash) + c;
+    }
+    return hash % HASH_TABLE_SIZE;
+}
