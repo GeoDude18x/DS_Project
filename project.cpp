@@ -60,6 +60,8 @@ void findMostExpensiveParcel(Parcel* root, Parcel* result);
 void displayLightestAndHeaviestParcel(HashTable* hashTable, char* destination);
 void findLightestParcel(Parcel* root, Parcel* result);
 void findHeaviestParcel(Parcel* root, Parcel* result);
+int readAndSort(char* fileName, HashTable* hashTable);
+char* readLine(FILE* file);
 
 // Function to generate hash value using djb2 algorithm
 unsigned long generateHash(char* destination) {
@@ -490,4 +492,98 @@ int main(void) {
     displayMenu(hashTable);
     
     return 0;
+}
+
+//
+//Function: readLine()
+//Description: This function reads one line from a file
+//Parameters:
+//	FILE* file: pointer for representing file being read
+//Returns:
+//  char*: Pointer to C-style string representing line read. 
+//     NULL if there's no line
+//
+char* readLine(FILE* file)
+{
+    char* line = (char*)malloc(MAX_LINE_LENGTH * sizeof(char));
+    if (line == NULL)
+    {
+        printf("Memory allocation error: readLine()\n");
+        return NULL;
+    }
+
+
+    if (fgets(line, MAX_LINE_LENGTH, file) != NULL)
+    {
+        char* ptr = strchr(line, '\n');
+        if (ptr != NULL)
+        {
+            *ptr = '\0';
+        }
+
+        return line;
+    }
+
+    free(line);
+    return NULL;
+}
+
+//
+//Function: readAndSort()
+//Description: This function reads the content a file and assigns the correct values
+//	to the MythUnit node within the doubly linked list. It also sorts the node 
+//  according to the powerLevel property.
+//Parameters:
+//	char* fileName: C-style string representing file name
+//Returns:
+//  int: return code indicating success or failure, or whether file was opened or closed
+//      successfully.
+//
+int readAndSort(char* fileName, HashTable* hashTable)
+{
+    char destination[MAX_COUNTRY_LENGTH] = { " " };
+    int weight = 0;
+    float valuation = 0;
+
+    FILE* file = fopen(fileName, "r");
+    if (file == NULL)
+    {
+        printf("Failed to open file");
+        return FILE_OPEN_ERROR;
+    }
+
+    bool endOfFile = false;
+    while (!endOfFile)
+    {
+        char* line = readLine(file);
+        if (line == NULL)
+        {
+            endOfFile = feof(file);
+            if (endOfFile)
+            {
+                if (fclose(file) != 0)
+                {
+                    printf("error closing file");
+                    return FILE_CLOSE_ERROR;
+                }
+                break;
+            }
+            printf("Error reading line.");
+            continue;
+        }
+
+        if (sscanf(line, "%19[^,],%d,%f", destination, &weight, &valuation) == 3)
+        {
+            insertWithSeparateChaining(hashTable, destination, weight, valuation);// reads and sorts into the BST  
+            free(line);
+        }
+        else
+        {
+            printf("Error parsing line: %s\n", line);
+            free(line);
+        }
+
+    }
+
+    return SUCCESS;
 }
