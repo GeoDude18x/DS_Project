@@ -2,19 +2,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Define the size of the hash table
 #define HASH_TABLE_SIZE 127
-
-// Define the maximum length of a country name
 #define MAX_COUNTRY_LENGTH 20
-
-// Define the maximum and minimum weights
 #define MAX_WEIGHT 50000
 #define MIN_WEIGHT 100
-
-// Define the maximum and minimum valuations
 #define MAX_VALUATION 2000
 #define MIN_VALUATION 10
+#define SUCCESS 0
+#define FAILURE -1
+#define FILE_OPEN_ERROR -2
+#define FILE_CLOSE_ERROR -3
+#define INPUT_FILE_NAME "myth_units.txt"
 
 // Define the structure for a Parcel
 typedef struct Parcel {
@@ -29,6 +27,13 @@ typedef struct Parcel {
 typedef struct HashTable {
     Parcel* root[HASH_TABLE_SIZE];
 } HashTable;
+
+// Prototypes
+unsigned long GenerateHash(char* destination);
+HashTable* InitializeHashTable(void);
+int InsertWithSeparateChaining(HashTable* hashTable, const char* destination, int weight, float valuation);
+Parcel* InitializeParcelNode(char* destination, int weight, float valuation);
+Parcel* InsertParcelIntoBST(Parcel* root, char* destination, int weight, float valuation);
 
 // Function to generate hash value using djb2 algorithm
 unsigned long GenerateHash(char* destination) {
