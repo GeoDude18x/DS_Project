@@ -6,6 +6,43 @@
 
 
 
+//MY CODE
+//Prototypes 
+Parcel* InitializeParcelNode(char* destination, int weight, float valuation);
+Parcel* InsertParcelIntoBST(Parcel* root, char* destination, int weight, float valuation);
+
+
+//Function Definitions
+// 
+//
+//Function: InitializeParcelNode()
+//Description: This allocates memory for a parcel node, and feeds the node
+//             the appropriate infromation recorded for a parcel node.
+//Parameters:
+//	char* destination: C-style string used to fill the destination attribute
+//  int weight: The weight of the parcel, used to fill the weight attribute
+//  float valuation: The valuation of the parcel, used to fill the valuation attribute
+//Returns:
+//  Parcel*: Pointer to the Parcel memory created and filled. NULL, in case of failure
+//           in memory allocation
+//
+Parcel* InitializeParcelNode(char* destination, int weight, float valuation) {
+    Parcel* node = (Parcel*)malloc(sizeof(Parcel*));
+    if (node == NULL) {
+        printf("Memory allocation failure for InitializeParcelNode()");
+        return NULL;
+    }
+
+    node->destination = destination;
+    node->weight = weight;
+    node->valuation = valuation;
+    node->left = NULL;
+    node->right = NULL;
+    return node;
+}
+
+
+
 
 
 
