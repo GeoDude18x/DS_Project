@@ -31,7 +31,7 @@ typedef struct HashTable {
 // Prototypes
 unsigned long GenerateHash(char* destination);
 HashTable* InitializeHashTable(void);
-int InsertWithSeparateChaining(HashTable* hashTable, const char* destination, int weight, float valuation);
+int InsertWithSeparateChaining(HashTable* hashTable, char* destination, int weight, float valuation);
 Parcel* InitializeParcelNode(char* destination, int weight, float valuation);
 Parcel* InsertParcelIntoBST(Parcel* root, char* destination, int weight, float valuation);
 
@@ -129,4 +129,8 @@ Parcel* InsertParcelIntoBST(Parcel* root, char* destination, int weight, float v
     }
 
     return root;
+}
+
+int main(void) {
+    return 0;
 }
