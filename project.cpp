@@ -238,6 +238,9 @@ int loadDataFromFile(HashTable* hashTable, char* filename) {
     while (fscanf(file, "%20s %d %f", destination, &weight, &valuation) == 3) {
         if (insertWithSeparateChaining(hashTable, destination, weight, valuation) == FAILURE) {
             printf("Failed to insert parcel: %s\n", destination);
+        }    
+        else {
+            printf("Inserted: %s %d %.2f\n", destination, weight, valuation);
         }
     }
 
