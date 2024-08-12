@@ -36,6 +36,7 @@ Parcel* InitializeParcelNode(char* destination, int weight, float valuation);
 Parcel* InsertParcelIntoBST(Parcel* root, char* destination, int weight, float valuation);
 int SearchParcelInBST(Parcel* root, int weightToSearch);
 Parcel* SearchWithSeparateChaining(HashTable* hashTable, char* destination, int weight);
+void printDestinationParcels(Parcel* root);
 
 // Function to generate hash value using djb2 algorithm
 unsigned long GenerateHash(char* destination) {
@@ -170,6 +171,16 @@ int SearchParcelInBST(Parcel* root, int weightToSearch) {
     }
 
     return FAILURE;
+}
+
+void printDestinationParcels(Parcel* root) {
+    if (root == NULL)
+        return;
+
+    printf("%s, %d, %.2f \n", root->destination, root->weight, root->valuation);
+    printDestinationParcels(root->left);
+    printDestinationParcels(root->right);
+
 }
 
 int main(void) {
