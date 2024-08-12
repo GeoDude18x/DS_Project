@@ -399,19 +399,36 @@ void displayMenu(HashTable* hashTable) {
         printf("4. Load parcels from a file.\n");
         printf("5. Exit.\n");
         printf("Enter your choice: ");
-        scanf("%d", &choice);
+        
+        if (scanf("%d", &choice) != 1) {  // Validate the input
+            printf("Invalid input. Please enter a valid choice.\n");
+            while (getchar() != '\n');  // Clear the input buffer
+            continue;
+        }
 
         switch (choice) {
         case 1:
             printf("Enter country name: ");
-            scanf("%s", destination);
+            if (scanf("%20s", destination) != 1) {
+                printf("Invalid input. Please enter a valid country name.\n");
+                while (getchar() != '\n');
+                continue;
+            }
             displayParcelsForDestination(hashTable, destination);
             break;
         case 2:
             printf("Enter country name: ");
-            scanf("%s", destination);
+            if (scanf("%20s", destination) != 1) {
+                printf("Invalid input. Please enter a valid country name.\n");
+                while (getchar() != '\n');
+                continue;
+            }
             printf("Enter weight to search: ");
-            scanf("%d", &weight);
+            if (scanf("%d", &weight) != 1) {
+                printf("Invalid input. Please enter a valid weight.\n");
+                while (getchar() != '\n');
+                continue;
+            }
             {
                 unsigned long hash = generateHash(destination);
                 Parcel* root = hashTable->root[hash];
@@ -432,7 +449,11 @@ void displayMenu(HashTable* hashTable) {
             break;
         case 3:
             printf("Enter weight to exclude: ");
-            scanf("%d", &weight);
+            if (scanf("%d", &weight) != 1) {
+                printf("Invalid input. Please enter a valid weight.\n");
+                while (getchar() != '\n');
+                continue;
+            }
             for (int i = 0; i < HASH_TABLE_SIZE; i++) {
                 Parcel* root = hashTable->root[i];
                 if (root != NULL) {
@@ -442,7 +463,11 @@ void displayMenu(HashTable* hashTable) {
             break;
         case 4:
             printf("Enter the name of the file to load parcels: ");
-            scanf("%s", fileName);
+            if (scanf("%s", fileName) != 1) {
+                printf("Invalid input. Please enter a valid file name.\n");
+                while (getchar() != '\n');
+                continue;
+            }
             if (loadDataFromFile(hashTable, fileName) == SUCCESS) {
                 printf("Data loaded successfully from %s\n", fileName);
             }
