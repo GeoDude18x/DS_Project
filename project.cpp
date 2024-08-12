@@ -86,13 +86,13 @@ int InsertWithSeparateChaining(HashTable* hashTable, char* destination, int weig
 //           in memory allocation
 //
 Parcel* InitializeParcelNode(char* destination, int weight, float valuation) {
-    Parcel* node = (Parcel*)malloc(sizeof(Parcel*));
+    Parcel* node = (Parcel*)malloc(sizeof(Parcel));
     if (node == NULL) {
         printf("Memory allocation failure for InitializeParcelNode()");
         return NULL;
     }
 
-    node->destination = destination;
+    strcpy(node->destination, (const char*)destination);
     node->weight = weight;
     node->valuation = valuation;
     node->left = NULL;
