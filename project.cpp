@@ -54,3 +54,13 @@ HashTable* InitializeHashTable(void) {
     }
     return hashTable;
 }
+
+// Function to insert a parcel into the hash table
+int InsertWithSeparateChaining(HashTable* hashTable, char* destination, int weight, float valuation) {
+    unsigned long hash = GenerateHash(destination);
+    Parcel* result = InsertParcelIntoBST(hashTable->root[hash], destination, weight, valuation);
+    if (result == NULL) {
+        return;
+    }
+    hashTable->root[hash] = result;
+}
