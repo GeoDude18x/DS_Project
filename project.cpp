@@ -40,3 +40,17 @@ unsigned long GenerateHash(char* country) {
     }
     return hash % HASH_TABLE_SIZE;
 }
+
+// Function to initialize the hash table
+HashTable* InitializeHashTable(void) {
+    HashTable* hashTable = (HashTable*)malloc(sizeof(HashTable));
+    if (hashTable == NULL) {
+        printf("Memory allocation failed.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i < HASH_TABLE_SIZE; i++) {
+        hashTable->root[i] = NULL;
+    }
+    return hashTable;
+}
