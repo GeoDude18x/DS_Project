@@ -24,6 +24,8 @@
 #define FILE_CLOSE_ERROR -3
 #define INPUT_FILE_NAME "myth_units.txt"
 
+#pragma warning (disable : 4996)
+
 // Define the structure for a Parcel
 typedef struct Parcel {
     char destination[MAX_COUNTRY_LENGTH + 1];
