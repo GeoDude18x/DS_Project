@@ -386,7 +386,15 @@ int loadDataFromFile(HashTable* hashTable, char* filename) {
     return SUCCESS;
 }
 
-// Function to display the menu
+// Function: displayMenu()
+// Description: This function displays a menu to the user and handles various options
+//              such as displaying parcel details, searching by country and weight, 
+//              displaying load and valuation, finding cheapest and most expensive parcels
+//              and displaying lightest and heaviest parcels.
+// Parameters:
+//  HashTable* hashTable: Pointer to the hash table containing parcel data.
+// Returns:
+//  void: This function does not return a value.
 void displayMenu(HashTable* hashTable) {
     int choice;
     char destination[MAX_COUNTRY_LENGTH + 1];
@@ -395,13 +403,14 @@ void displayMenu(HashTable* hashTable) {
 
     do {
         printf("Menu:\n");
-        printf("1. Enter country name and display all parcels.\n");
+        printf("1. Enter country name and display all parels.\n");
         printf("2. Enter country and weight to search for a parcel.\n");
-        printf("3. Enter weight to display all parcels excluding that weight.\n");
-        printf("4. Load parcels from a file.\n");
-        printf("5. Exit.\n");
+        printf("3. Enter country name to display total parcel load and valuation.\n");
+        printf("4. Enter the country name and display cheapest and most expensive parcels.\n");
+        printf("5. Enter the country name and display lightest and heaviest parcels.\n");
+        printf("6. Exit the application.\n\n");
         printf("Enter your choice: ");
-        
+
         if (scanf("%d", &choice) != 1) {
             printf("Invalid input. Please enter a valid choice.\n");
             while (getchar() != '\n');
@@ -431,59 +440,45 @@ void displayMenu(HashTable* hashTable) {
                 while (getchar() != '\n');
                 continue;
             }
-            {
-                unsigned long hash = generateHash(destination);
-                Parcel* root = hashTable->root[hash];
-
-                if (root != NULL) {
-                    Parcel* foundParcel = insertParcelIntoBST(root, destination, weight, 0.0f);
-                    if (foundParcel != NULL) {
-                        printf("Parcel found with weight %d in %s.\n", weight, destination);
-                    }
-                    else {
-                        printf("Parcel not found with weight %d in %s.\n", weight, destination);
-                    }
-                }
-                else {
-                    printf("No parcels found for destination: %s\n", destination);
-                }
-            }
+            checkOtherWeightParcels(hashTable, destination, weight);
             break;
         case 3:
-            printf("Enter weight to exclude: ");
-            if (scanf("%d", &weight) != 1) {
-                printf("Invalid input. Please enter a valid weight.\n");
+            printf("Enter country name: ");
+            if (scanf("%20s", destination) != 1) {
+                printf("Invalid input. Please enter a valid country name.\n");
                 while (getchar() != '\n');
                 continue;
             }
-            for (int i = 0; i < HASH_TABLE_SIZE; i++) {
-                Parcel* root = hashTable->root[i];
-                if (root != NULL) {
-                    printOtherWeightedParcels(root, weight);
-                }
-            }
+            displayStatsTotal(hashTable, destination);
             break;
         case 4:
-            printf("Enter the name of the file to load parcels: ");
-            if (scanf("%s", fileName) != 1) {
-                printf("Invalid input. Please enter a valid file name.\n");
+            printf("Enter country name: ");
+            if (scanf("%20s", destination) != 1) {
+                printf("Invalid input. Please enter a valid country name.\n");
                 while (getchar() != '\n');
                 continue;
             }
-            if (loadDataFromFile(hashTable, fileName) == SUCCESS) {
-                printf("Data loaded successfully from %s\n", fileName);
-            }
-            else {
-                printf("Failed to load data from %s\n", fileName);
-            }
+            displayCheapestAndMostExpensiveParcels(hashTable, destination);
             break;
         case 5:
-            printf("Exiting...\n");
+            printf("Enter country name: ");
+            if (scanf("%20s", destination) != 1) {
+                printf("Invalid input. Please enter a valid country name.\n");
+                while (getchar() != '\n');
+                continue;
+            }
+            displayLightestAndHeaviestParcel(hashTable, destination);
+            break;
+        case 6:
+            printf("Exiting the application...\n");
             break;
         default:
             printf("Invalid choice. Please try again.\n");
         }
-    } while (choice != 5);
+        
+		printf("\n");
+
+    } while (choice != 6);
 }
 
 int main(void) {
