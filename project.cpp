@@ -69,3 +69,63 @@ int InsertWithSeparateChaining(HashTable* hashTable, char* destination, int weig
     }
     hashTable->root[hash] = result;
 }
+
+//Function Definitions
+// 
+//
+//Function: InitializeParcelNode()
+//Description: This allocates memory for a parcel node, and feeds the node
+//             the appropriate infromation recorded for a parcel node.
+//Parameters:
+//	char* destination: C-style string used to fill the destination attribute
+//  int weight: The weight of the parcel, used to fill the weight attribute
+//  float valuation: The valuation of the parcel, used to fill the valuation attribute
+//Returns:
+//  Parcel*: Pointer to the Parcel memory created and filled. NULL, in case of failure
+//           in memory allocation
+//
+Parcel* InitializeParcelNode(char* destination, int weight, float valuation) {
+    Parcel* node = (Parcel*)malloc(sizeof(Parcel*));
+    if (node == NULL) {
+        printf("Memory allocation failure for InitializeParcelNode()");
+        return NULL;
+    }
+
+    node->destination = destination;
+    node->weight = weight;
+    node->valuation = valuation;
+    node->left = NULL;
+    node->right = NULL;
+    return node;
+}
+
+//Function Definitions
+// 
+//
+//Function: InsertParcelIntoBST()
+//Description: This function inserts a new element into the BST.
+//             It does so by traversing the tree according to the
+//             weight value of the parcel.
+//Parameters:
+//  Parcel* root: Pointer to the root of the BST. This is updated as the BST is
+//                traversed according to the weight attribute.
+//	char* destination: C-style string used to fill the destination attribute
+//  int weight: The weight of the parcel, used to fill the weight attribute
+//  float valuation: The valuation of the parcel, used to fill the valuation attribute
+//Returns:
+//  Parcel*: Pointer to the new Parcel object. NULL, in case of failure.
+//
+Parcel* InsertParcelIntoBST(Parcel* root, char* destination, int weight, float valuation) {
+    if (root == NULL) { // parent is empty so node is inserted here
+        return InitializeParcelNode(destination, weight, valuation);
+    }
+
+    if (weight < root->weight) { // weight is less than root's, attempting to insert again on the left node (with updated root)
+        root->left = InsertParcelIntoBST(root->left, destination, weight, valuation);
+    }
+    else if (elementToInsert > root->Element) { // weight is greater than root's, attempting to insert again on the right node (with updated root)
+        root->right = InsertParcelIntoBST(root->right, destination, weight, valuation);
+    }
+
+    return root;
+}
