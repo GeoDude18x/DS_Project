@@ -22,7 +22,7 @@
 #define FAILURE -1
 #define FILE_OPEN_ERROR -2
 #define FILE_CLOSE_ERROR -3
-#define INPUT_FILE_NAME "myth_units.txt"
+#define INPUT_FILE_NAME "couriers.txt"
 
 #pragma warning (disable : 4996)
 
