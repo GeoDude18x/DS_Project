@@ -46,7 +46,6 @@ HashTable* initializeHashTable(void);
 int insertWithSeparateChaining(HashTable* hashTable, char* destination, int weight, float valuation);
 Parcel* initializeParcelNode(char* destination, int weight, float valuation);
 Parcel* insertParcelIntoBST(Parcel* root, char* destination, int weight, float valuation);
-int loadDataFromFile(HashTable* hashTable, char* filename);
 void printDestinationParcels(Parcel* root);
 void displayParcelsForDestination(HashTable* hashTable, char* destination);
 void printOtherWeightedParcels(Parcel* root, int weight);
@@ -356,34 +355,6 @@ void findHeaviestParcel(Parcel* root, Parcel* result)
         result->weight = root->weight;
         result->valuation = root->valuation;
     }
-}
-
-// Function to load data into the hash table
-int loadDataFromFile(HashTable* hashTable, char* filename) {
-    FILE* file = fopen(filename, "r");
-    if (file == NULL) {
-        printf("Error opening file %s\n", filename);
-        return FILE_OPEN_ERROR;
-    }
-    char destination[MAX_COUNTRY_LENGTH + 1];
-    int weight;
-    float valuation;
-
-    while (fscanf(file, "%20s %d %f", destination, &weight, &valuation) == 3) {
-        if (insertWithSeparateChaining(hashTable, destination, weight, valuation) == FAILURE) {
-            printf("Failed to insert parcel: %s\n", destination);
-        }    
-        else {
-            printf("Inserted: %s %d %.2f\n", destination, weight, valuation);
-        }
-    }
-
-    if (fclose(file) != 0) {
-        printf("Error closing file %s\n", filename);
-        return FILE_CLOSE_ERROR;
-    }
-
-    return SUCCESS;
 }
 
 // Function: displayMenu()
